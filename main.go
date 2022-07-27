@@ -9,8 +9,10 @@ import (
 )
 
 type Game struct {
-	Name       string `json:"name"`
-	Price      string `json:"price"`
+	Name              string `json:"name"`
+	PriceWithDiscount string `json:"priceWithDiscount"`
+	DiscountPercent   string `json:"discountPercent"`
+	RealPrice         string `json:"realPrice"`
 }
 
 func main() {
@@ -28,7 +30,17 @@ func main() {
 	})
 
 	newCol.OnHTML(".discount_final_price", func(element *colly.HTMLElement) {
-		game.Price = element.Text
+		game.PriceWithDiscount = element.Text
+		allGames = append(allGames, game)
+	})
+
+	newCol.OnHTML(".discount_pct", func(element *colly.HTMLElement) {
+		game.DiscountPercent = element.Text
+		allGames = append(allGames, game)
+	})
+
+	newCol.OnHTML(".discount_original_price", func(element *colly.HTMLElement) {
+		game.RealPrice = element.Text
 		allGames = append(allGames, game)
 	})
 
@@ -38,7 +50,7 @@ func main() {
 
 	newCol.Visit("https://store.steampowered.com/")
 
-	newCol.OnScraped(func(r *colly.Response){
+	newCol.OnScraped(func(r *colly.Response) {
 		allGames = append(allGames, game)
 		game = Game{}
 	})
