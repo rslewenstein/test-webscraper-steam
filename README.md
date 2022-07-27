@@ -1,0 +1,1 @@
+Simple test about web scraper using Golang, getting the data of the Steam Store
